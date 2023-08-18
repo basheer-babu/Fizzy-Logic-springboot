@@ -31,7 +31,7 @@ public class NameValidatorService {
         if(s1.toLowerCase().equals(s2.toLowerCase())) {
         	return s1.toLowerCase().equals(s2.toLowerCase());
         }else {
-        	if(countWords(s1)<=1) {
+        	if(countWords(s1)<=1 && countWords(s2)<=1) {
         	return comparePhonetically(s1.toLowerCase(), s2.toLowerCase());
         	}
         	else {

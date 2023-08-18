@@ -54,7 +54,7 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 					return nameValidator(entityInput);
 				case "COMPANY":
 
-					return null;
+					return companyValidator(entityInput);
 				case "ADDRESS":
 
 					return null;
@@ -78,7 +78,53 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 	}
 
 	public EntityOutput nameValidator(EntityInput entityInput) throws Exception {
+		System.out.println("name Validator");
+		String text1 = entityInput.getName1().getText().toLowerCase();
+		String text2 = entityInput.getName2().getText().toLowerCase();
+		int wordCount = nameValidatorService.countWords(nameValidatorService.findLongerString(text1, text2));
+		System.out.println("large input word count:" + wordCount);
 
+		if (nameValidatorService.compareStrings(text1, text2)) {
+
+			entityOutput.setMatchResult(matched+"1");
+			entityOutput.setMatchScore(100);
+
+			return entityOutput;
+
+		} else if (nameValidatorService.compareStringsIgnoringRepeats(text1, text2)) {
+			entityOutput.setMatchResult(matched+"2");
+			entityOutput.setMatchScore(100);
+
+			return entityOutput;
+		} else {
+			int matchCount = (int) nameValidatorService.countMatchingWordsPhonetically(text1, text2);
+			System.out.println("matchCount:"+matchCount);
+			if(matchCount==wordCount) {
+				entityOutput.setMatchResult(matched+"3");
+				entityOutput.setMatchScore(nameValidatorService.calculateMatchPercentage(wordCount, matchCount));
+				return entityOutput;
+			}else if (matchCount > 0) {
+				entityOutput.setMatchResult(pote_match);
+				entityOutput.setMatchScore(nameValidatorService.calculateMatchPercentage(wordCount, matchCount));
+
+				return entityOutput;
+			} else {
+				entityOutput.setMatchResult(not_match);
+				entityOutput.setMatchScore(0);
+
+				return entityOutput;
+
+			}
+		}
+
+//		entityOutput.setMatchResult(not_match);
+//		entityOutput.setMatchScore(0);
+
+//		return entityOutput;
+
+	}
+	public EntityOutput companyValidator(EntityInput entityInput) throws Exception {
+		System.out.println("Company Validator");
 		String text1 = entityInput.getName1().getText().toLowerCase();
 		String text2 = entityInput.getName2().getText().toLowerCase();
 		int wordCount = nameValidatorService.countWords(nameValidatorService.findLongerString(text1, text2));
