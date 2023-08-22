@@ -1,7 +1,10 @@
 package com.eidiko.fizzy.service;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.codec.language.Metaphone;
@@ -10,11 +13,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class NameValidatorService {
 	public static String findLongerString(String s1, String s2) {
-        if (s1.length() >= s2.length()) {
-            return s1;
-        } else {
-            return s2;
-        }
+		 String[] words1 = s1.split(" ");
+	        String[] words2 = s2.split(" ");
+
+	        if (words1.length > words2.length) {
+	            return s1;
+	        } else if (words2.length > words1.length) {
+	            return s2;
+	        } else {
+	            return s1;
+	        }
     }
 	
 	public static int countWords(String input) {
@@ -47,26 +55,17 @@ public class NameValidatorService {
         if(set1.equals(set2)) {
         	return set1.equals(set2);
         }else {
-        	return !hasDistinctRepeatedWordsMeta(s1, s2);
+        	return hasDistinctRepeatedWordsMeta(s1, s2);
         }
     }
 	public static boolean hasDistinctRepeatedWordsMeta(String input1, String input2) {
-        Metaphone metaphone = new Metaphone();
-        Set<String> metaphoneCodes1 = new HashSet<>();
-        Set<String> metaphoneCodes2 = new HashSet<>();
-
-        for (String word : input1.split(" ")) {
-            metaphoneCodes1.add(metaphone.encode(word));
-        }
-
-        for (String word : input2.split(" ")) {
-            if (metaphoneCodes1.contains(metaphone.encode(word))) {
-                metaphoneCodes2.add(metaphone.encode(word));
-            }
-        }
-
-        return metaphoneCodes2.size() > 0;
-    }
+		String longString=findLongerString(input1,input2);
+		Set<String> words1 = new HashSet<>(Arrays.asList(longString.split(" ")));
+		
+        return words1.size()==countMatchingWordsPhonetically( input1, input2);
+    
+	}
+	
 
 	
 	public long wordMatchCount(String s1, String s2) {
@@ -98,7 +97,7 @@ public class NameValidatorService {
         }
 
         double percentage = ((double) matchCount / total) * 100;
-        return percentage;
+        return Double.valueOf(new DecimalFormat("##.##").format(percentage)); 
     }
 	
 	public static boolean comparePhonetically(String word1, String word2) {
@@ -119,6 +118,40 @@ public class NameValidatorService {
                 .filter(word1 -> words2.stream().anyMatch(word2 -> metaphone.isMetaphoneEqual(word1, word2)))
                 .count();
     }
+	public static boolean letterMatch(String s1 , String s2) {
+
+        String[] s1Arr=s1.split(" ");
+        String[] s2Arr=s2.split(" ");
+        List<String> ls=new ArrayList<String>(Arrays.asList(s2Arr));
+
+        boolean flag=true;
+
+        if(s1Arr.length!=s2Arr.length) return false;
+
+        for(int i=0;i<s1Arr.length; i++) {
+
+            for(int j=0;j<ls.size(); j++) {
+
+                if(s1Arr[i].length()==1 || ls.get(j).length()==1 ) {
+                    //System.out.println("if");
+                    flag=s1Arr[i].charAt(0)== ls.get(j).charAt(0);
+                }else {
+                    //System.out.println("else");
+                    flag=s1Arr[i].equalsIgnoreCase( ls.get(j));
+                }
+
+                if(flag) {
+                    ls.remove(j);
+                    break;
+                }
+            }
+
+            if(!flag) break;
+        }
+
+        return flag;
+    }
+
 	
 	
 }
