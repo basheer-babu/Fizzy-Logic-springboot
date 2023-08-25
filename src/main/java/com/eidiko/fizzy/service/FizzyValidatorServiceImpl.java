@@ -9,13 +9,13 @@ import com.eidiko.fizzy.model.EntityOutput;
 
 @Service
 public class FizzyValidatorServiceImpl implements FizzyValidatorService {
-	 
+
 	@Autowired
 	NameValidatorService nameValidatorService;
-	
+
 	@Autowired
 	AddressValidatorService addressValidatorService;
-	
+
 	@Autowired
 	CompanyValidatorService companyValidatorService;
 
@@ -29,13 +29,13 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 	public static final String part_match = "partially Matched";
 	public static final String matched = "Matched";
 	public static final String not_match = "Not Matched";
+	public static final String letter_match = "letters Matched";
 	public static final double match_score = 0.0;
 
 	@Override
 	public EntityOutput mainValidator(EntityInput entityInput) throws Exception {
 
 		// EntityOutput entityOutput=new EntityOutput();
-		 
 
 		String text1 = entityInput.getName1().getText().toLowerCase();
 		String text2 = entityInput.getName2().getText().toLowerCase();
@@ -82,12 +82,12 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 
 	public EntityOutput nameValidator(EntityInput entityInput) throws Exception {
 		System.out.println("name Validator");
-		String text1 =nameValidatorService.cleanStrings(entityInput.getName1().getText()) ;
+		String text1 = nameValidatorService.cleanStrings(entityInput.getName1().getText());
 		String text2 = nameValidatorService.cleanStrings(entityInput.getName2().getText());
 		// null check
 
 		int wordCount = nameValidatorService.countWords(nameValidatorService.findLongerString(text1, text2));
-		System.out.println("large input word count:" + wordCount);
+//		System.out.println("large input word count:" + wordCount);
 		if (text1 == " " || text1 == "" || text1 == null || text2 == "" || text2 == " " || text2 == null
 				|| wordCount == 0) {
 			entityOutput.setMatchResult(not_match);
@@ -98,27 +98,27 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 
 		if (nameValidatorService.compareStrings(text1, text2)) {
 
-			entityOutput.setMatchResult(matched + "1");
+			entityOutput.setMatchResult(matched );
 			entityOutput.setMatchScore(100);
 
 			return entityOutput;
 
 		} else if (nameValidatorService.letterMatch(text1, text2)) {
-			entityOutput.setMatchResult(matched + "2");
+			entityOutput.setMatchResult(matched );
 			entityOutput.setMatchScore(100);
 
 			return entityOutput;
 
 		} else if (nameValidatorService.compareStringsIgnoringRepeats(text1, text2)) {
-			entityOutput.setMatchResult(matched + "3");
+			entityOutput.setMatchResult(matched );
 			entityOutput.setMatchScore(100);
 
 			return entityOutput;
 		} else {
 			int matchCount = (int) nameValidatorService.countMatchingWordsPhonetically(text1, text2);
-			System.out.println("matchCount:" + matchCount);
+//			System.out.println("matchCount:" + matchCount);
 			if (matchCount == wordCount) {
-				entityOutput.setMatchResult(matched + "4");
+				entityOutput.setMatchResult(matched);
 				entityOutput.setMatchScore(nameValidatorService.calculateMatchPercentage(wordCount, matchCount));
 				return entityOutput;
 			} else if (matchCount > 0) {
@@ -127,15 +127,23 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 
 				return entityOutput;
 			} else {
+
+				double letterPerc = nameValidatorService.calculateMatchedLetterPercentage(text1, text2);
 				
-				double letterPerc=nameValidatorService.calculateMatchedLetterPercentage(text1, text2);
-				if(letterPerc!=0.0) {
-					entityOutput.setMatchResult("letter match percentage");
-					entityOutput.setMatchScore(letterPerc);
+				if(letterPerc== 100.0){
+					entityOutput.setMatchResult(matched );
+					entityOutput.setMatchScore(100);
 
 					return entityOutput;
 					
+				}else if(letterPerc != 0.0) {
+					entityOutput.setMatchResult(letter_match);
+					entityOutput.setMatchScore(letterPerc);
+
+					return entityOutput;
 				}
+
+				
 				entityOutput.setMatchResult(not_match);
 				entityOutput.setMatchScore(0);
 
@@ -156,74 +164,69 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 		String text1 = entityInput.getName1().getText().toLowerCase();
 		String text2 = entityInput.getName2().getText().toLowerCase();
 		int wordCount = nameValidatorService.countWords(nameValidatorService.findLongerString(text1, text2));
-		System.out.println("large input word count:" + wordCount);
+//		System.out.println("large input word count:" + wordCount);
 
 		if (nameValidatorService.compareStrings(text1, text2)) {
 
-			entityOutput.setMatchResult(matched + "1");
+			entityOutput.setMatchResult(matched);
 			entityOutput.setMatchScore(100);
 
 			return entityOutput;
 
 		} else if (nameValidatorService.compareStringsIgnoringRepeats(text1, text2)) {
-			entityOutput.setMatchResult(matched + "2");
+			entityOutput.setMatchResult(matched);
 			entityOutput.setMatchScore(100);
 
 			return entityOutput;
-		} else if(companyValidatorService.companyFirstWordMatch(text1, text2)) {
-			entityOutput.setMatchResult(matched + "3");
+		} else if (companyValidatorService.companyFirstWordMatch(text1, text2)) {
+			entityOutput.setMatchResult(matched);
 			entityOutput.setMatchScore(100);
 			return entityOutput;
-			
-		}else {
-			
-				entityOutput.setMatchResult(not_match);
-				entityOutput.setMatchScore(0);
 
-				return entityOutput;
+		} else {
 
-			
+			entityOutput.setMatchResult(not_match);
+			entityOutput.setMatchScore(0);
+
+			return entityOutput;
+
 		}
 
-
-
 	}
-	
+
 	public EntityOutput addressValidator(EntityInput entityInput) throws Exception {
-		
+
 		System.out.println("Address Validator");
-		String text1 =nameValidatorService.cleanStrings(entityInput.getName1().getText()) ;
+		String text1 = nameValidatorService.cleanStrings(entityInput.getName1().getText());
 		String text2 = nameValidatorService.cleanStrings(entityInput.getName2().getText());
 		// null check
 
 		int wordCount = nameValidatorService.countWords(nameValidatorService.findLongerString(text1, text2));
-		System.out.println("large input word count:" + wordCount);
+//		System.out.println("large input word count:" + wordCount);
 		if (text1 == " " || text1 == "" || text1 == null || text2 == "" || text2 == " " || text2 == null
 				|| wordCount == 0) {
 			entityOutput.setMatchResult(not_match);
 			entityOutput.setMatchScore(match_score);
 
 			return entityOutput;
-		}else if (nameValidatorService.compareStrings(text1, text2)) {
+		} else if (nameValidatorService.compareStrings(text1, text2)) {
 
-			entityOutput.setMatchResult(matched + "1");
+			entityOutput.setMatchResult(matched );
 			entityOutput.setMatchScore(100);
 
 			return entityOutput;
-		}else  if(addressValidatorService.countryCodeMatch(text1, text2)) {
-			entityOutput.setMatchResult(matched + "2");
+		} else if (addressValidatorService.countryCodeMatch(text1, text2)) {
+			entityOutput.setMatchResult(matched );
 			entityOutput.setMatchScore(100);
 
 			return entityOutput;
-		}else{
+		} else {
 			entityOutput.setMatchResult(not_match);
 			entityOutput.setMatchScore(0);
 
 			return entityOutput;
 		}
-		
-		
-		
+
 	}
 
 }

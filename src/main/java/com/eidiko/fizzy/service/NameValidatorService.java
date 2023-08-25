@@ -163,6 +163,9 @@ public class NameValidatorService {
 	
 	
 	public static double calculateMatchedLetterPercentage(String str1, String str2) {
+		// Remove spaces and convert strings to lowercase
+		str1 = str1.replaceAll(" ", "").toLowerCase();
+        str2 = str2.replaceAll(" ", "").toLowerCase();
         Map<Character, Long> charFrequency1 = getCharacterFrequency(str1);
         Map<Character, Long> charFrequency2 = getCharacterFrequency(str2);
         
@@ -172,8 +175,8 @@ public class NameValidatorService {
                 .sum();
         
         long totalCharacters = Math.max(str1.length(), str2.length());
-        
-        return ((double) totalMatches / totalCharacters) * 100;
+        double percentage=((double) totalMatches / totalCharacters) * 100;
+        return Double.valueOf(new DecimalFormat("##.##").format(percentage));
     }
  public static Map<Character, Long> getCharacterFrequency(String str) {
         return str.chars()

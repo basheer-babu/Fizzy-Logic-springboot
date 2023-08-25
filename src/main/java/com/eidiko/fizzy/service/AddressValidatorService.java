@@ -27,10 +27,10 @@ public class AddressValidatorService {
 			countryName=getCountryName(s1);
 			if(countryName!=null) {
 				if(countryName.equalsIgnoreCase(s2) ) {
-					System.out.println("true"+countryName);
+//					System.out.println("true"+countryName);
 					return true;
 				}else {
-					System.out.println("false"+countryName);
+//					System.out.println("false"+countryName);
 					return false;
 				}
 				
@@ -45,10 +45,10 @@ public class AddressValidatorService {
 			countryCode=getCountryCode(s1);
 			if(countryCode!=null) {
 				if(countryCode.equalsIgnoreCase(s2) ) {
-					System.out.println("true"+countryCode);
+//					System.out.println("true"+countryCode);
 					return true;
 				}else {
-					System.out.println("false"+countryCode);
+//					System.out.println("false"+countryCode);
 					return false;
 				}
 				
@@ -63,7 +63,7 @@ public class AddressValidatorService {
 	}
 
 	public static String getCountryName(String countryCode) throws IOException {
-		System.out.println("countryCode" + countryCode);
+//		System.out.println("countryCode" + countryCode);
 
 //		String countryCode1 = "DK";
 //		String description1 = "DENMARK";
@@ -77,8 +77,8 @@ public class AddressValidatorService {
 				String description = record.get(1); // Get value from the second column
 
 				if (countryCodeCsv.equalsIgnoreCase(countryCode)) {
-					System.out.println("Matching Country Code: " + countryCodeCsv);
-					System.out.println("Matching Description: " + description);
+//					System.out.println("Matching Country Code: " + countryCodeCsv);
+//					System.out.println("Matching Description: " + description);
 					temp = false;
 					return description;
 				}
