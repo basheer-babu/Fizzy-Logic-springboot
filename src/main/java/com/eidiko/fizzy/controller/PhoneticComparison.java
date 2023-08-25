@@ -6,17 +6,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 
 public class PhoneticComparison {
     public static void main(String[] args) {
-        String input1 = "s.p.rao";
-        String input2 = "pilli Srinivas";
+        String input1 = "acb";
+        String input2 = "xyz";
 
-        boolean arePhoneticallyMatched = arePhoneticallyMatched(input1, input2);
-        System.out.println("Are the inputs phonetically matched? " + arePhoneticallyMatched);
+//        boolean arePhoneticallyMatched = arePhoneticallyMatched(input1, input2);
+//        System.out.println("Are the inputs phonetically matched? " + arePhoneticallyMatched);
+//        System.out.println("cp"+comparePhonetically(input1, input2));
+        System.out.println("letter match perce::"+calculateMatchedPercentage(input1, input2));
+        System.out.println("letter match order spec"+calculateMatchedPercentageOrderSpec(input1, input2));
     }
 
     public static boolean arePhoneticallyMatched(String input1, String input2) {
@@ -74,4 +80,50 @@ public class PhoneticComparison {
 
         return result.toString().trim();
     }
+
+	public static boolean comparePhonetically(String word1, String word2) {
+		Metaphone metaphone = new Metaphone();
+		metaphone.setMaxCodeLen(100);
+		System.out.println(word1+"::"+word2);
+        String phonetic1 = metaphone.encode(word1);
+        String phonetic2 = metaphone.encode(word2);
+        System.out.println("mpw1"+phonetic1);
+        System.out.println("mpw2"+phonetic2);
+
+        return phonetic1.equals(phonetic2);
+    }
+	 public static double calculateMatchedPercentageOrderSpec(String str1, String str2) {
+	        int length = Math.min(str1.length(), str2.length());
+	        
+	        long matchedCount = IntStream.range(0, length)
+	                .filter(i -> str1.charAt(i) == str2.charAt(i))
+	                .count();
+	        
+	        return (matchedCount * 100.0) / length;
+	    }
+	 
+	 
+	 public static double calculateMatchedPercentage(String str1, String str2) {
+	        Map<Character, Long> charFrequency1 = getCharacterFrequency(str1);
+	        Map<Character, Long> charFrequency2 = getCharacterFrequency(str2);
+	        
+	        long totalMatches = charFrequency1.entrySet().stream()
+	                .filter(entry -> charFrequency2.containsKey(entry.getKey()))
+	                .mapToLong(entry -> Math.min(entry.getValue(), charFrequency2.get(entry.getKey())))
+	                .sum();
+	        
+	        long totalCharacters = Math.max(str1.length(), str2.length());
+	        
+	        return ((double) totalMatches / totalCharacters) * 100;
+	    }
+	 public static Map<Character, Long> getCharacterFrequency(String str) {
+	        return str.chars()
+	                .mapToObj(ch -> (char) ch)
+	                .collect(Collectors.groupingBy(
+	                        character -> character,
+	                        Collectors.counting()
+	                ));
+	    }
+	    
+	    
 }

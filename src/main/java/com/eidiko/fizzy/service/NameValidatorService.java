@@ -5,13 +5,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.language.Metaphone;
 import org.springframework.stereotype.Service;
 
 @Service
 public class NameValidatorService {
+	
+	//removing special characters and lower case.
+	public static String cleanStrings(String s) {
+		String regex = "[^a-zA-Z0-9]";
+		return s.replaceAll(regex, " ").toLowerCase().trim().replaceAll("\\s+", " ");
+	}
 	public static String findLongerString(String s1, String s2) {
 		 String[] words1 = s1.split(" ");
 	        String[] words2 = s2.split(" ");
@@ -102,6 +110,7 @@ public class NameValidatorService {
 	
 	public static boolean comparePhonetically(String word1, String word2) {
 		Metaphone metaphone = new Metaphone();
+		metaphone.setMaxCodeLen(100);
         String phonetic1 = metaphone.encode(word1);
         String phonetic2 = metaphone.encode(word2);
 
@@ -110,7 +119,7 @@ public class NameValidatorService {
 	
 	public static long countMatchingWordsPhonetically(String input1, String input2) {
         Metaphone metaphone = new Metaphone();
-
+        metaphone.setMaxCodeLen(100);
         Set<String> words1 = new HashSet<>(Arrays.asList(input1.split(" ")));
         Set<String> words2 = new HashSet<>(Arrays.asList(input2.split(" ")));
 
@@ -150,6 +159,29 @@ public class NameValidatorService {
         }
 
         return flag;
+    }
+	
+	
+	public static double calculateMatchedLetterPercentage(String str1, String str2) {
+        Map<Character, Long> charFrequency1 = getCharacterFrequency(str1);
+        Map<Character, Long> charFrequency2 = getCharacterFrequency(str2);
+        
+        long totalMatches = charFrequency1.entrySet().stream()
+                .filter(entry -> charFrequency2.containsKey(entry.getKey()))
+                .mapToLong(entry -> Math.min(entry.getValue(), charFrequency2.get(entry.getKey())))
+                .sum();
+        
+        long totalCharacters = Math.max(str1.length(), str2.length());
+        
+        return ((double) totalMatches / totalCharacters) * 100;
+    }
+ public static Map<Character, Long> getCharacterFrequency(String str) {
+        return str.chars()
+                .mapToObj(ch -> (char) ch)
+                .collect(Collectors.groupingBy(
+                        character -> character,
+                        Collectors.counting()
+                ));
     }
 
 	
