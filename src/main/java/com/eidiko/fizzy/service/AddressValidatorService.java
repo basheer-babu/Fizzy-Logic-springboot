@@ -97,7 +97,7 @@ public class AddressValidatorService {
 	}
 
 	public static String getCountryCode(String countryName) throws IOException {
-		System.out.println("countryCode" + countryName);
+//		System.out.println("countryCode" + countryName);
 
 //		String countryCode1 = "DK";
 //		String description1 = "DENMARK";
@@ -110,8 +110,8 @@ public class AddressValidatorService {
 				String description = record.get(1); // Get value from the second column
 
 				if (description.equalsIgnoreCase(countryName)) {
-					System.out.println("Matching Country Code: " + countryCodeCsv);
-					System.out.println("Matching Description: " + description);
+//					System.out.println("Matching Country Code: " + countryCodeCsv);
+//					System.out.println("Matching Description: " + description);
 					temp = false;
 					return countryCodeCsv;
 				}

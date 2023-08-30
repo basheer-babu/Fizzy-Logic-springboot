@@ -26,10 +26,10 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 		this.entityOutput = new EntityOutput();
 	}
 
-	public static final String part_match = "partially Matched";
+	public static final String part_match = "Partially Matched";
 	public static final String matched = "Matched";
 	public static final String not_match = "Not Matched";
-	public static final String letter_match = "letters Matched";
+	public static final String letter_match = "Letters Matched";
 	public static final double match_score = 0.0;
 
 	@Override
@@ -81,7 +81,7 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 	}
 
 	public EntityOutput nameValidator(EntityInput entityInput) throws Exception {
-		System.out.println("name Validator");
+//		System.out.println("Name Validator");
 		String text1 = nameValidatorService.cleanStrings(entityInput.getName1().getText());
 		String text2 = nameValidatorService.cleanStrings(entityInput.getName2().getText());
 		// null check
@@ -117,11 +117,17 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 		} else {
 			int matchCount = (int) nameValidatorService.countMatchingWordsPhonetically(text1, text2);
 //			System.out.println("matchCount:" + matchCount);
+			
 			if (matchCount == wordCount) {
 				entityOutput.setMatchResult(matched);
 				entityOutput.setMatchScore(nameValidatorService.calculateMatchPercentage(wordCount, matchCount));
 				return entityOutput;
-			} else if (matchCount > 0) {
+			}else if(wordCount==3 && matchCount==2) {// requested condition total words 3 and matched words 2 100%
+				entityOutput.setMatchResult(matched );
+				entityOutput.setMatchScore(100);
+				return entityOutput;
+				
+			}else if (matchCount > 0) {
 				entityOutput.setMatchResult(part_match);
 				entityOutput.setMatchScore(nameValidatorService.calculateMatchPercentage(wordCount, matchCount));
 
@@ -160,7 +166,7 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 	}
 
 	public EntityOutput companyValidator(EntityInput entityInput) throws Exception {
-		System.out.println("Company Validator");
+//		System.out.println("Company Validator");
 		String text1 = entityInput.getName1().getText().toLowerCase();
 		String text2 = entityInput.getName2().getText().toLowerCase();
 		int wordCount = nameValidatorService.countWords(nameValidatorService.findLongerString(text1, text2));
@@ -196,7 +202,7 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 
 	public EntityOutput addressValidator(EntityInput entityInput) throws Exception {
 
-		System.out.println("Address Validator");
+//		System.out.println("Address Validator");
 		String text1 = nameValidatorService.cleanStrings(entityInput.getName1().getText());
 		String text2 = nameValidatorService.cleanStrings(entityInput.getName2().getText());
 		// null check

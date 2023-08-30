@@ -47,12 +47,10 @@ public class NameValidatorService {
         if(s1.toLowerCase().equals(s2.toLowerCase())) {
         	return s1.toLowerCase().equals(s2.toLowerCase());
         }else {
-        	if(countWords(s1)<=1 && countWords(s2)<=1) {
+        	
         	return comparePhonetically(s1.toLowerCase(), s2.toLowerCase());
-        	}
-        	else {
-        	return s1.toLowerCase().equals(s2.toLowerCase());
-			}
+        	
+        	
         }
     }
 	
@@ -109,6 +107,8 @@ public class NameValidatorService {
     }
 	
 	public static boolean comparePhonetically(String word1, String word2) {
+		word1 = word1.replaceAll(" ", "").toLowerCase();
+		word2 = word2.replaceAll(" ", "").toLowerCase();
 		Metaphone metaphone = new Metaphone();
 		metaphone.setMaxCodeLen(100);
         String phonetic1 = metaphone.encode(word1);

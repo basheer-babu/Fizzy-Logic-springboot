@@ -27,13 +27,14 @@ public class FuzzyController {
 	public EntityOutput consume(@RequestBody EntityInput Ei) throws JsonProcessingException {
 		//input
 		System.out.println("---------------------------");
-		System.out.println("input1::"+Ei.getName1().getText());
-		System.out.println("input2::"+Ei.getName2().getText());
+		System.out.println("Hit Name::"+Ei.getName1().getText());
+		System.out.println("Watch Name::"+Ei.getName2().getText());
+		System.out.println("Entity Type::"+Ei.getName2().getEntityType());
 		
 		try {
 			entityOutput=fizzyValidatorService.mainValidator(Ei);
-			System.out.println("match Score::"+entityOutput.getMatchScore());
-			System.out.println("match Result::"+entityOutput.getMatchResult());
+			System.out.println("Match Score::"+entityOutput.getMatchScore());
+			System.out.println("Match Result::"+entityOutput.getMatchResult());
 			System.out.println("---------------------------");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
