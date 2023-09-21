@@ -2,6 +2,8 @@ package com.eidiko.fizzy.controller;
 
 import org.apache.commons.codec.language.Metaphone;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,14 +17,23 @@ import java.util.stream.IntStream;
 
 public class PhoneticComparison {
     public static void main(String[] args) {
-        String input1 = "acb";
-        String input2 = "xyz";
+        String input1 = "బాబు";
+        String input2 = "బ";
 
 //        boolean arePhoneticallyMatched = arePhoneticallyMatched(input1, input2);
 //        System.out.println("Are the inputs phonetically matched? " + arePhoneticallyMatched);
 //        System.out.println("cp"+comparePhonetically(input1, input2));
-        System.out.println("letter match perce::"+calculateMatchedPercentage(input1, input2));
-        System.out.println("letter match order spec"+calculateMatchedPercentageOrderSpec(input1, input2));
+//        System.out.println("letter match perce::"+calculateMatchedPercentage(input1, input2));
+//        System.out.println("letter match order spec"+calculateMatchedPercentageOrderSpec(input1, input2));
+//        LanguageIdentifier identifier = new LanguageIdentifier("Hello, this is javatpoint.");  
+//        String language = identifier.getLanguage();  
+//        System.out.println("Language code is : " + language);  
+        System.out.println("RATIO::"+FuzzySearch.ratio(input1, input2));
+        System.out.println("బాబు".equalsIgnoreCase("బాబు బాబు"));
+        System.out.println("compareph"+comparePhonetically(input1, input2));
+       System.out.println("partialRatio::"+FuzzySearch.partialRatio(input1, input2));
+       System.out.println("tokenSortRatio::"+FuzzySearch.tokenSortRatio(input1, input2));
+       System.out.println("tokenSetRatio::"+FuzzySearch.tokenSetRatio(input1, input2));
     }
 
     public static boolean arePhoneticallyMatched(String input1, String input2) {

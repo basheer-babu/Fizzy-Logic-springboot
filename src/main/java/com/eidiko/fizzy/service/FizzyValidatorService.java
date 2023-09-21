@@ -10,4 +10,6 @@ public interface FizzyValidatorService {
 
 	
 	public EntityOutput mainValidator(EntityInput entityInput) throws Exception;
+	public EntityOutput wuzzyValidator(EntityInput entityInput) throws Exception;
+	
 }

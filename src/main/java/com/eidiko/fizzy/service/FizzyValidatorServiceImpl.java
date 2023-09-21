@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.eidiko.fizzy.model.EntityInput;
 import com.eidiko.fizzy.model.EntityOutput;
 
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+
 @Service
 public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 
@@ -233,6 +235,119 @@ public class FizzyValidatorServiceImpl implements FizzyValidatorService {
 			return entityOutput;
 		}
 
+	}
+		/**
+		 * service wuzzy validator
+		 * 
+		 */
+	@Override
+	public EntityOutput wuzzyValidator(EntityInput entityInput) throws Exception {
+
+		// EntityOutput entityOutput=new EntityOutput();
+		
+		String text1 = entityInput.getName1().getText().toLowerCase();
+		String text2 = entityInput.getName2().getText().toLowerCase();
+		
+		// null check
+		if (text1 == " " || text1 == "" || text1 == null || text2 == " " || text2 == "" || text2 == null) {
+			entityOutput.setMatchResult(not_match);
+			entityOutput.setMatchScore(match_score);
+
+			return entityOutput;
+		}
+		if (nameValidatorService.compareStrings(entityInput.getName1().getEntityType(),
+				entityInput.getName2().getEntityType())) {
+			if (nameValidatorService.compareStrings(entityInput.getName1().getLanguage(),
+					entityInput.getName2().getLanguage())) {
+
+				switch (entityInput.getName1().getEntityType()) {
+				case "NAME":
+
+					return wuzzyNameValidator(entityInput);
+				case "COMPANY":
+
+					return wuzzyNameValidator(entityInput);
+				case "ADDRESS":
+
+					return wuzzyNameValidator(entityInput);
+				default:
+					entityOutput.setMatchResult(not_match);
+					entityOutput.setMatchScore(0);
+					return entityOutput;
+				}
+
+			} else {
+				entityOutput.setMatchResult(not_match);
+				entityOutput.setMatchScore(0);
+				return entityOutput;
+			}
+			//
+		} else {
+			entityOutput.setMatchResult(not_match);
+			entityOutput.setMatchScore(0);
+			return entityOutput;
+		}
+	}
+	public EntityOutput wuzzyNameValidator(EntityInput entityInput) throws Exception {
+		String text1 = nameValidatorService.cleanStrings(entityInput.getName1().getText());
+		String text2 = nameValidatorService.cleanStrings(entityInput.getName2().getText());
+		// null check
+		
+		if(text1=="") {
+			
+		System.out.println("not english");
+			int ratio=FuzzySearch.ratio(entityInput.getName1().getText(), entityInput.getName2().getText());
+			if(ratio==0) {
+				entityOutput.setMatchResult(not_match );
+				entityOutput.setMatchScore(0);
+
+				return entityOutput;
+			}else if(ratio==100) {
+				entityOutput.setMatchResult(matched );
+				entityOutput.setMatchScore(100);
+
+				return entityOutput;
+			}else {
+				entityOutput.setMatchResult(part_match );
+				entityOutput.setMatchScore(ratio);
+
+				return entityOutput;
+			}
+		}
+		
+		int wordCount = nameValidatorService.countWords(nameValidatorService.findLongerString(text1, text2));
+//		System.out.println("large input word count:" + wordCount);
+		if (text1 == " " || text1 == "" || text1 == null || text2 == "" || text2 == " " || text2 == null
+				|| wordCount == 0) {
+			entityOutput.setMatchResult(not_match);
+			entityOutput.setMatchScore(match_score);
+
+			return entityOutput;
+		}else if (nameValidatorService.compareStrings(text1, text2)) {
+
+			entityOutput.setMatchResult(matched );
+			entityOutput.setMatchScore(100);
+
+			return entityOutput;
+
+		}else {
+			int ratio=FuzzySearch.ratio(text1, text2);
+			if(ratio==0) {
+				entityOutput.setMatchResult(not_match );
+				entityOutput.setMatchScore(0);
+
+				return entityOutput;
+			}else {
+				entityOutput.setMatchResult(part_match );
+				entityOutput.setMatchScore(ratio);
+
+				return entityOutput;
+			}
+			
+		}
+		
+
+		
 	}
 
 }

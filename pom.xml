@@ -40,6 +40,12 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.9.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/me.xdrop/fuzzywuzzy -->
+		<dependency>
+			<groupId>me.xdrop</groupId>
+			<artifactId>fuzzywuzzy</artifactId>
+			<version>1.4.0</version>
+		</dependency>
 
 
 	</dependencies>
